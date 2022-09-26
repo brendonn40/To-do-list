@@ -6,10 +6,13 @@ export function createDisplay(currentProject){
     display.appendChild(createAddTask())
     display.appendChild(createTasks(currentProject))
     taskListener()
+    listenForDone(currentProject)
+
     
 
 
 }
+
 function createTitle(currentProject){
     let title = document.createElement("div")
     title.classList.add("task-title")
@@ -17,14 +20,45 @@ function createTitle(currentProject){
     return title
 }
 function createTasks(currentProject){
-    let tasks = document.createElement("div")
+    let tasks = document.createElement("form")
+    tasks.setAttribute("id","tasks")
     for (let i = 0; i < currentProject.project.length; i++) {
-        let task = document.createElement("div")
-        task.innerText = `${currentProject.project[i].title} due date:${currentProject.project[i].dueDate}`
-        tasks.appendChild(task)
-
+        let label = document.createElement("label")
+        let text = document.createTextNode(`${currentProject.project[i].title} due date:${currentProject.project[i].dueDate}`)
+        let input = document.createElement("input")
+        input.type="checkbox"
+        label.appendChild(input)
+        label.appendChild(text)
+        input.setAttribute("data",i)
+        label.setAttribute("data",i)
+        tasks.appendChild(label)
+        tasks.appendChild(document.createElement("br"));
+        if(currentProject.project[i].isDone){
+            label.classList.add("done")
+            input.checked=true
+        }
     }
     return tasks
+}
+
+export function listenForDone(currentTaskList){
+    const tasks = document.querySelectorAll("input[type='checkbox']");
+    const labels = document.querySelectorAll("label")
+    for (let i = 0; i < tasks.length; i++) {
+        tasks[i].addEventListener("change",function(e){
+            let index = tasks[i].getAttribute("data")
+            if (e.target.checked){
+                currentTaskList.project[index].isDone = true
+                labels[index].classList.toggle("done")
+            }else{
+                currentTaskList.project[index].isDone = false
+                labels[index].classList.toggle("done")
+            }
+        })
+        
+    }
+
+    //todo toggle done class and put that  task in the bellow part of the display
 }
 function createAddTask(){
     let div = document.createElement("div")
@@ -75,7 +109,7 @@ export function CreateEventListeners(projects){
     }
 
 }
-//remove marked from the oldest one
+//remove marked from the oldest one(project)
 function toogleOld(){
     const items = document.getElementsByClassName("project-item")
     for (let i = 0; i < items.length; i++) {
@@ -85,6 +119,7 @@ function toogleOld(){
         
     }
 }
+//listens for a add task click
 function taskListener(){
     const button = document.getElementById("add-button")
     button.addEventListener("click",function(e){
