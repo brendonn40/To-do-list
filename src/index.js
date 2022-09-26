@@ -1,10 +1,24 @@
 import "./style.css"
 import {createToDo} from"./toDo.js"
+import {callProjects,createDisplay, CreateEventListeners, taskListener} from "./domHandler.js"
+import {createProject, grabInbox} from "./projectHandler.js"
+let inbox = createProject("inbox")
+let week = createProject("week")
+let code = createProject("code")
+let projects = [inbox,week,code]
+let novaTarefa = createToDo("programar","resolver os exercicios do odin project","25/09/2022","high")
+let novaTarefa2 = createToDo("cortar cabelo","ir ate o batata e cortar o cabelo","25/10/2022","low")
+let novaTarefa3 = createToDo("lavar louca","lavar as loucas depois da janta ","29/10/2022","medium")
 
-let novaTarefa = createToDo("cortar cabelo","ir ate o batata e cortar o cabelo","25/09/2022","medium")
 
-console.table(novaTarefa)
-// novaTarefa.isDone = true
-novaTarefa.toogle()
-novaTarefa.setPriority("low")
-console.table(novaTarefa)
+
+
+week.add(novaTarefa2)
+code.add(novaTarefa)
+projects[1].add(novaTarefa3)
+console.log(projects[1].project)
+
+grabInbox(projects)
+callProjects(projects)
+CreateEventListeners(projects)
+
