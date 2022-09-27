@@ -1,11 +1,13 @@
 // put the tasks into display
 import plus from "./plus.svg"
+import { createToDo } from "./toDo"
+import { projects as arrayOfProjects } from "./index.js"
 export function createDisplay(currentProject){
     const display = document.getElementById("display")
     display.appendChild(createTitle(currentProject))
     display.appendChild(createAddTask())
     display.appendChild(createTasks(currentProject))
-    taskListener()
+    taskListener(currentProject)
     listenForDone(currentProject)
 
     
@@ -20,7 +22,7 @@ function createTitle(currentProject){
     return title
 }
 function createTasks(currentProject){
-    let tasks = document.createElement("form")
+    let tasks = document.createElement("div")
     tasks.setAttribute("id","tasks")
     for (let i = 0; i < currentProject.project.length; i++) {
         let label = document.createElement("label")
@@ -71,7 +73,8 @@ function createAddTask(){
     div.appendChild(text)
     return div
 }
-export function callProjects(projects){
+//
+export function loadProjects(projects){
     const div = document.getElementsByClassName("projects")
     
 
@@ -85,6 +88,7 @@ export function callProjects(projects){
         
     }
 }
+//clear an element
 export function clear(elementName){
     const content = document.getElementById(elementName)
      while(content.firstChild){
@@ -119,40 +123,59 @@ function toogleOld(){
         
     }
 }
-//listens for a add task click
-function taskListener(){
+//listens for a add task click, calls the form and create new task
+function taskListener(project){
     const button = document.getElementById("add-button")
     const display = document.getElementById("display")
     button.addEventListener("click",function(e){
         e.stopPropagation()
         display.appendChild(createForm())
-        //todo bring out form to get details for the new task
-        console.log("puts out modal for new task")
+        createNewTask(project)
     })
 }
-function formToObject(){
-    //todo create a function to grab form values and create a new todo object
+//turns data from the form into a new todo object
+function createNewTask(project){
+    const button = document.getElementById("submit")
+    const form = document.getElementById("add-task-form")
+    button.addEventListener("click",(e) => {
+        e.preventDefault()
+        const formData = new FormData(form)
+        let newToDo = createToDo(formData.get("title"),formData.get("description"),formData.get("dueDate"),formData.get("priority")) 
+        project.add(newToDo)
+        if(project.name !== "inbox"){
+            arrayOfProjects[0].add(newToDo)
+        }
+        form.reset()
+        clear("display")
+        createDisplay(project)
+    })
+
+    
 }
-function createNewProject(){
-    //todo whenever the new project button is clicked it calls this function which will ask for a name for the project and its gonna call createProject from projectHandler
-}
+//create the form to get tittle,description,duedate and priority
 function createForm(){
     const form = document.createElement("form")
     form.setAttribute("id","add-task-form")
     let title = document.createElement("input")
     title.setAttribute("type", "text")
     title.setAttribute("name", "title")
+    title.required= true
     form.appendChild(createLabel("Title:",title))
+    form.appendChild(document.createElement("br"))
+
     //create and add description input
-    let description = document.createElement("input")
+    let description = document.createElement("TEXTAREA")
     description.setAttribute("type", "text")
     description.setAttribute("name", "description")
-    form.appendChild(createLabel("Description:",description))
+    form.appendChild(createLabel("Description:",description,true))
+    form.appendChild(document.createElement("br"))
     //create and add due date input
     let dueDate = document.createElement("input")
-    dueDate.setAttribute("type", "text")
+    dueDate.setAttribute("type", "date")
     dueDate.setAttribute("name", "dueDate")
+    dueDate.required = true
     form.appendChild(createLabel("Due date:",dueDate))
+    form.appendChild(document.createElement("br"))
     //creates select element for priority
     let priority = document.createElement("select")
     priority.setAttribute("id","priority")
@@ -164,14 +187,23 @@ function createForm(){
     priority.add(medium)
     priority.add(high)
     form.appendChild(createLabel("Priority:",priority))
-    //gotta add due date and get a way to validate that
+    let button = document.createElement("button")
+    button.type = "submit"
+    button.id = "submit"
+    button.innerText= "submit"
+    form.appendChild(document.createElement("br"))
+    form.appendChild(button)
     return form
 
 }
-function createLabel(text,input){
+//creates a label 
+function createLabel(text,input,lineBreak = false){
     let label = document.createElement("label")
     let labelText = document.createTextNode(text)
     label.appendChild(labelText)
+    if(lineBreak){
+        label.appendChild(document.createElement("br"))
+    }
     label.appendChild(input)
     return label
 }
