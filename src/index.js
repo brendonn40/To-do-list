@@ -16,7 +16,7 @@ let novaTarefa3 = createToDo("lavar louca","lavar as loucas depois da janta ","2
 week.add(novaTarefa2)
 code.add(novaTarefa)
 projects[1].add(novaTarefa3)
-console.log(projects[1].project)
+
 
 grabInbox(projects)
 callProjects(projects)

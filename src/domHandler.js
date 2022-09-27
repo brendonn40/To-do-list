@@ -50,6 +50,7 @@ export function listenForDone(currentTaskList){
             if (e.target.checked){
                 currentTaskList.project[index].isDone = true
                 labels[index].classList.toggle("done")
+
             }else{
                 currentTaskList.project[index].isDone = false
                 labels[index].classList.toggle("done")
@@ -58,7 +59,6 @@ export function listenForDone(currentTaskList){
         
     }
 
-    //todo toggle done class and put that  task in the bellow part of the display
 }
 function createAddTask(){
     let div = document.createElement("div")
@@ -85,8 +85,8 @@ export function callProjects(projects){
         
     }
 }
-export function clear(){
-    const content = document.getElementById("display")
+export function clear(elementName){
+    const content = document.getElementById(elementName)
      while(content.firstChild){
         content.removeChild(content.firstChild);
 }
@@ -100,7 +100,7 @@ export function CreateEventListeners(projects){
             let index = projectItems[i].getAttribute("data")
             toogleOld()
             projectItems[i].classList.toggle("selected")
-            clear()
+            clear("display")
             createDisplay(projects[index])
 
         })
@@ -122,9 +122,56 @@ function toogleOld(){
 //listens for a add task click
 function taskListener(){
     const button = document.getElementById("add-button")
+    const display = document.getElementById("display")
     button.addEventListener("click",function(e){
         e.stopPropagation()
+        display.appendChild(createForm())
         //todo bring out form to get details for the new task
         console.log("puts out modal for new task")
     })
+}
+function formToObject(){
+    //todo create a function to grab form values and create a new todo object
+}
+function createNewProject(){
+    //todo whenever the new project button is clicked it calls this function which will ask for a name for the project and its gonna call createProject from projectHandler
+}
+function createForm(){
+    const form = document.createElement("form")
+    form.setAttribute("id","add-task-form")
+    let title = document.createElement("input")
+    title.setAttribute("type", "text")
+    title.setAttribute("name", "title")
+    form.appendChild(createLabel("Title:",title))
+    //create and add description input
+    let description = document.createElement("input")
+    description.setAttribute("type", "text")
+    description.setAttribute("name", "description")
+    form.appendChild(createLabel("Description:",description))
+    //create and add due date input
+    let dueDate = document.createElement("input")
+    dueDate.setAttribute("type", "text")
+    dueDate.setAttribute("name", "dueDate")
+    form.appendChild(createLabel("Due date:",dueDate))
+    //creates select element for priority
+    let priority = document.createElement("select")
+    priority.setAttribute("id","priority")
+    priority.setAttribute("name", "priority")
+    let low = new Option('low','low')
+    let medium = new Option('medium','medium')
+    let high = new Option("high","high")
+    priority.add(low,undefined)
+    priority.add(medium)
+    priority.add(high)
+    form.appendChild(createLabel("Priority:",priority))
+    //gotta add due date and get a way to validate that
+    return form
+
+}
+function createLabel(text,input){
+    let label = document.createElement("label")
+    let labelText = document.createTextNode(text)
+    label.appendChild(labelText)
+    label.appendChild(input)
+    return label
 }
