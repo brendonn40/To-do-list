@@ -2,7 +2,9 @@
 import plus from "./plus.svg"
 import { createToDo } from "./toDo"
 import { projects as arrayOfProjects } from "./index.js"
-export function createDisplay(currentProject){
+import { createProject } from "./projectHandler.js"
+//populates the #display 
+function createDisplay(currentProject){
     const display = document.getElementById("display")
     display.appendChild(createTitle(currentProject))
     display.appendChild(createAddTask())
@@ -14,13 +16,14 @@ export function createDisplay(currentProject){
 
 
 }
-
+//create div with title of projects name
 function createTitle(currentProject){
     let title = document.createElement("div")
     title.classList.add("task-title")
     title.innerText = currentProject.name
     return title
 }
+//creates a div with the current project Todos in display
 function createTasks(currentProject){
     let tasks = document.createElement("div")
     tasks.setAttribute("id","tasks")
@@ -42,8 +45,8 @@ function createTasks(currentProject){
     }
     return tasks
 }
-
-export function listenForDone(currentTaskList){
+//set event listener for a task to check if its been marked as done, and if so it changes the task to be linethrough 
+function listenForDone(currentTaskList){
     const tasks = document.querySelectorAll("input[type='checkbox']");
     const labels = document.querySelectorAll("label")
     for (let i = 0; i < tasks.length; i++) {
@@ -62,6 +65,7 @@ export function listenForDone(currentTaskList){
     }
 
 }
+//creates the div with add new task button
 function createAddTask(){
     let div = document.createElement("div")
     let plusImg = document.createElement("img")
@@ -73,23 +77,23 @@ function createAddTask(){
     div.appendChild(text)
     return div
 }
-//
+// loads the projects in a side bar
 export function loadProjects(projects){
-    const div = document.getElementsByClassName("projects")
-    
+    const div = document.getElementById("projects")
 
     for (let i = 0; i < projects.length; i++) {
         let element = document.createElement("div")
         element.classList.add("project-item")
         element.innerText = projects[i].name
         element.setAttribute("data",i)
-        div[0].appendChild(element)
+        div.appendChild(element)
 
         
     }
+    div.appendChild(createAddProject())
 }
 //clear an element
-export function clear(elementName){
+function clear(elementName){
     const content = document.getElementById(elementName)
      while(content.firstChild){
         content.removeChild(content.firstChild);
@@ -101,6 +105,11 @@ export function CreateEventListeners(projects){
     for (let i = 0; i < projectItems.length; i++) {
         projectItems[i].addEventListener("click",function(e){
             e.stopPropagation()
+            if(projectItems[i].id === "add-project" && !projectItems[i].classList.contains("selected")){
+                const aux = document.getElementById("expand")
+                aux.classList.toggle("hidden")
+                addProject()  
+            }
             let index = projectItems[i].getAttribute("data")
             toogleOld()
             projectItems[i].classList.toggle("selected")
@@ -206,4 +215,44 @@ function createLabel(text,input,lineBreak = false){
     }
     label.appendChild(input)
     return label
+}
+//creates the div with add project function
+function createAddProject(){
+    
+    let div = document.createElement("div")
+    div.innerText= "add project +"
+    div.classList.add("project-item")
+    div.id = "add-project"
+    div.appendChild(expandAdd())
+    return div
+}
+
+//sets a event listener for the submit button and creates a new project/ reloads projects sidebar
+function addProject(){
+    const btn = document.getElementById("add-project-btn")
+    btn.addEventListener("click", (e) =>{
+        e.preventDefault()
+        const name = document.getElementById("project-name").value
+        arrayOfProjects.push(createProject(name))  
+        clear("projects")
+        loadProjects(arrayOfProjects)
+        CreateEventListeners(arrayOfProjects)
+    })
+}
+//returns a div with a form to grab a new project name
+function expandAdd(){
+    let input = document.createElement("input")
+    let btn = document.createElement("button")
+    let div = document.createElement("div")
+    btn.type="submit"
+    btn.innerText = "add"
+    btn.id = "add-project-btn"
+    input.setAttribute("type", "text")
+    input.setAttribute("name", "projectName")
+    input.id = "project-name"
+    div.appendChild(createLabel("name",input,true))
+    div.appendChild(btn)
+    div.id = "expand"
+    div.classList.add("hidden")
+    return div
 }

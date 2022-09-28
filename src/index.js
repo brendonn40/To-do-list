@@ -1,6 +1,6 @@
 import "./style.css"
 import {createToDo} from"./toDo.js"
-import {loadProjects,createDisplay, CreateEventListeners, listenForDone, taskListener} from "./domHandler.js"
+import {loadProjects, CreateEventListeners} from "./domHandler.js"
 import {createProject, grabInbox} from "./projectHandler.js"
 let inbox = createProject("inbox")
 let week = createProject("week")
