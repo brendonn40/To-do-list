@@ -58,9 +58,7 @@
 .task-title{
     font-size: 2rem;
 }
-.selected {
-    background-color: var(--dark-grey);
-}
+
 .add-task{
     display: flex;
     align-items: center;
@@ -77,4 +75,14 @@ textarea{
 }
 .hidden{
     display: none;
+}
+#add-project{
+    background-color: var(--white);
+    font-size: 2rem;
+    width: 200px;
+    text-align: center;
+    border-radius: 5px;
+}
+.selected {
+    background-color: var(--dark-grey);
 }

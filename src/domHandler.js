@@ -91,6 +91,7 @@ export function loadProjects(projects){
         
     }
     div.appendChild(createAddProject())
+    newProjectListener()
 }
 //clear an element
 function clear(elementName){
@@ -105,18 +106,12 @@ export function CreateEventListeners(projects){
     for (let i = 0; i < projectItems.length; i++) {
         projectItems[i].addEventListener("click",function(e){
             e.stopPropagation()
-            if(projectItems[i].id === "add-project" && !projectItems[i].classList.contains("selected")){
-                const aux = document.getElementById("expand")
-                aux.classList.toggle("hidden")
-                addProject()  
-            }
             let index = projectItems[i].getAttribute("data")
             toogleOld()
             projectItems[i].classList.toggle("selected")
             clear("display")
-            if(projectItems[i].id !== 'add-project'){
-                createDisplay(projects[index])
-            }
+            createDisplay(projects[index])
+            
             
 
         })
@@ -128,15 +123,19 @@ export function CreateEventListeners(projects){
 //remove marked from the oldest one(project)
 function toogleOld(){
     const items = document.getElementsByClassName("project-item")
+    const addProjectDiv = document.getElementById("add-project")
     for (let i = 0; i < items.length; i++) {
         if (items[i].classList.contains("selected")){
             items[i].classList.toggle("selected")
-            if(items[i].id === "add-project"){
-                const element = document.getElementById("expand")
-                element.classList.toggle("hidden")
-            }
+            return
         }
         
+    }
+    if(addProjectDiv.classList.contains("selected")){
+        addProjectDiv.classList.toggle("selected")
+        const element = document.getElementById("expand")
+        element.classList.toggle("hidden")
+        addProjectDiv.style.background = "#FFFFFF"
     }
 }
 //listens for a add task click, calls the form and create new task
@@ -228,7 +227,6 @@ function createAddProject(){
     
     let div = document.createElement("div")
     div.innerText= "add project +"
-    div.classList.add("project-item")
     div.id = "add-project"
     div.appendChild(expandAdd())
     return div
@@ -262,4 +260,20 @@ function expandAdd(){
     div.id = "expand"
     div.classList.add("hidden")
     return div
+}
+function newProjectListener(){
+    const btn = document.getElementById("add-project")
+
+    btn.addEventListener("click",(e) => {
+        e.stopPropagation()
+        toogleOld()
+        clear("display")
+        btn.classList.toggle("selected")
+        btn.style.background = "#757575"
+        const aux = document.getElementById("expand")
+        aux.classList.toggle("hidden")
+        addProject()  
+        
+    })
+    
 }
