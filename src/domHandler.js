@@ -237,11 +237,15 @@ function addProject(){
     const btn = document.getElementById("add-project-btn")
     btn.addEventListener("click", (e) =>{
         e.preventDefault()
+        e.stopPropagation()
         const name = document.getElementById("project-name").value
-        arrayOfProjects.push(createProject(name))  
-        clear("projects")
-        loadProjects(arrayOfProjects)
-        CreateEventListeners(arrayOfProjects)
+        if(name !== ""){
+            arrayOfProjects.push(createProject(name))  
+            clear("projects")
+            loadProjects(arrayOfProjects)
+            CreateEventListeners(arrayOfProjects)
+        }
+        
     })
 }
 //returns a div with a form to grab a new project name
