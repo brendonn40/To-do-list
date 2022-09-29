@@ -114,7 +114,10 @@ export function CreateEventListeners(projects){
             toogleOld()
             projectItems[i].classList.toggle("selected")
             clear("display")
-            createDisplay(projects[index])
+            if(projectItems[i].id !== 'add-project'){
+                createDisplay(projects[index])
+            }
+            
 
         })
         
@@ -128,6 +131,10 @@ function toogleOld(){
     for (let i = 0; i < items.length; i++) {
         if (items[i].classList.contains("selected")){
             items[i].classList.toggle("selected")
+            if(items[i].id === "add-project"){
+                const element = document.getElementById("expand")
+                element.classList.toggle("hidden")
+            }
         }
         
     }
