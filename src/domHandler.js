@@ -32,12 +32,10 @@ function createTasks(currentProject){
         let text = document.createTextNode(`${currentProject.project[i].title} due date:${currentProject.project[i].dueDate}`)
         let input = document.createElement("input")
         input.type="checkbox"
-        label.appendChild(input)
-        label.appendChild(text)
+        label.append(input,text)
         input.setAttribute("data",i)
         label.setAttribute("data",i)
-        tasks.appendChild(label)
-        tasks.appendChild(document.createElement("br"));
+        tasks.append(label,document.createElement("br"))
         if(currentProject.project[i].isDone){
             label.classList.add("done")
             input.checked=true
@@ -259,8 +257,8 @@ function expandAdd(){
     input.setAttribute("type", "text")
     input.setAttribute("name", "projectName")
     input.id = "project-name"
-    div.appendChild(createLabel("name",input,true))
-    div.appendChild(btn)
+    let text= document.createTextNode("name") 
+    div.append(text,input,document.createElement("br"),btn)
     div.id = "expand"
     div.classList.add("hidden")
     return div
