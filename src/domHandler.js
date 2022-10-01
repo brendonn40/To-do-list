@@ -1,5 +1,8 @@
 // put the tasks into display
 import plus from "./plus.svg"
+import delet from "./delete.svg"
+import details from "./details.svg"
+import edit from "./edit.svg"
 import { createToDo } from "./toDo"
 import { projects as arrayOfProjects } from "./index.js"
 import { createProject } from "./projectHandler.js"
@@ -35,7 +38,9 @@ function createTasks(currentProject){
         label.append(input,text)
         input.setAttribute("data",i)
         label.setAttribute("data",i)
-        tasks.append(label,document.createElement("br"))
+        label.appendChild(createIcons())
+        label.classList.add("task")
+        tasks.appendChild(label)
         if(currentProject.project[i].isDone){
             label.classList.add("done")
             input.checked=true
@@ -279,3 +284,26 @@ function newProjectListener(){
     })
     
 }
+
+function createIcons(){
+    let editImg = document.createElement("input")
+    let deletImg = document.createElement("input")
+    let detailsImg = document.createElement("input")
+    let buttons = document.createElement("div")
+    editImg.type= "image"
+    deletImg.type= "image"
+    detailsImg.type = "image"
+    editImg.src = edit
+    deletImg.src = delet
+    detailsImg.src = details
+    editImg.id = "edit"
+    deletImg.id = "delete"
+    detailsImg.id = "details"
+    editImg.classList.add("icon")
+    deletImg.classList.add("icon")
+    detailsImg.classList.add("icon")
+    buttons.append(detailsImg,editImg,deletImg)
+    buttons.style.display="inline"
+    return buttons
+}
+    
