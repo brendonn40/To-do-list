@@ -14,6 +14,7 @@ function createDisplay(currentProject){
     display.appendChild(createTasks(currentProject))
     taskListener(currentProject)
     listenForDone(currentProject)
+    iconsListener(currentProject)
 
     
 
@@ -38,7 +39,7 @@ function createTasks(currentProject){
         label.append(input,text)
         input.setAttribute("data",i)
         label.setAttribute("data",i)
-        label.appendChild(createIcons())
+        label.appendChild(createIcons(i))
         label.classList.add("task")
         tasks.appendChild(label)
         if(currentProject.project[i].isDone){
@@ -285,7 +286,7 @@ function newProjectListener(){
     
 }
 
-function createIcons(){
+function createIcons(number){
     let editImg = document.createElement("input")
     let deletImg = document.createElement("input")
     let detailsImg = document.createElement("input")
@@ -302,8 +303,64 @@ function createIcons(){
     editImg.classList.add("icon")
     deletImg.classList.add("icon")
     detailsImg.classList.add("icon")
+    editImg.setAttribute("data",number)
+    deletImg.setAttribute("data",number)
+    detailsImg.setAttribute("data",number)
     buttons.append(detailsImg,editImg,deletImg)
     buttons.style.display="inline"
     return buttons
 }
-    
+
+function iconsListener(currentProject){
+
+    function search(todo,projects){
+        for (let i = 1; i < projects.length; i++) {
+            for (let j = 0; j < projects[i].project.length; j++) {
+                if(projects[i].project[j] === todo){
+                    projects[i].remove(todo)
+                }
+                
+            }
+            
+        }
+    }
+    let icons = document.getElementsByClassName("icon")
+    for (let i = 0; i < icons.length; i++) {
+        icons[i].addEventListener("click",function(e){
+            e.stopPropagation()
+            switch (icons[i].id) {
+                case "details":
+                    console.log("details")
+                    //todo
+                    break;
+                case "edit":
+                    console.log("edit")
+                    //todo
+                    break;
+                case "delete":
+                    let index = icons[i].getAttribute("data")
+                    let deleted = currentProject.project[index]
+                    if(currentProject.name !== "inbox"){
+                        currentProject.remove(deleted)
+                        arrayOfProjects[0].remove(deleted)
+                        clear("display")
+                        createDisplay(currentProject)
+                        break;
+                    }else{
+                        currentProject.remove(deleted)
+                        search(deleted,arrayOfProjects)
+                        clear("display")
+                        createDisplay(currentProject)
+                        break;
+                    }
+                    
+                    
+                    
+            }
+
+        })
+        
+
+    }
+}
+

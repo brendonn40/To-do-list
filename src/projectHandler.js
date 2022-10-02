@@ -16,6 +16,7 @@ export function createProject(name){
 }
 // gets all tasks and put in a single list/project
 export function grabInbox(projects){
+    projects[0] = createProject("inbox")
     for (let i = 1; i < projects.length; i++) {
         for (let j = 0; j < projects[i].project.length; j++) {
             projects[0].add(projects[i].project[j])    
