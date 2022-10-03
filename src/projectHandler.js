@@ -11,7 +11,11 @@ export function createProject(name){
             if(index > -1 ){
                 project.splice(index,1)
             }
+        },
+        order(){
+            project.sort((a, b) => (a.priority > b.priority) ? 1 : -1)
         }
+
     }
 }
 // gets all tasks and put in a single list/project

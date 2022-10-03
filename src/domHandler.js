@@ -8,6 +8,7 @@ import { projects as arrayOfProjects } from "./index.js"
 import { createProject } from "./projectHandler.js"
 //populates the #display 
 function createDisplay(currentProject){
+    currentProject.order()
     const display = document.getElementById("display")
     display.appendChild(createTitle(currentProject))
     display.appendChild(createAddTask())
@@ -199,9 +200,9 @@ function createForm(){
     let priority = document.createElement("select")
     priority.setAttribute("id","priority")
     priority.setAttribute("name", "priority")
-    let low = new Option('low','low')
-    let medium = new Option('medium','medium')
-    let high = new Option("high","high")
+    let low = new Option('low','2')
+    let medium = new Option('medium','1')
+    let high = new Option("high","0")
     priority.add(low,undefined)
     priority.add(medium)
     priority.add(high)
