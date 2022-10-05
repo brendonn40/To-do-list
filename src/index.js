@@ -1,6 +1,6 @@
 import "./style.css"
 import {createToDo} from"./toDo.js"
-import {loadProjects, CreateEventListeners} from "./domHandler.js"
+import {loadProjects, CreateEventListeners, newForm} from "./domHandler.js"
 import {createProject, grabInbox} from "./projectHandler.js"
 let inbox = createProject("inbox")
 let week = createProject("week")
@@ -21,4 +21,3 @@ projects[1].add(novaTarefa3)
 grabInbox(projects)
 loadProjects(projects)
 CreateEventListeners(projects)
-

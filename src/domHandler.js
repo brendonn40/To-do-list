@@ -33,7 +33,7 @@ function createTasks(currentProject){
     let tasks = document.createElement("div")
     tasks.setAttribute("id","tasks")
     for (let i = 0; i < currentProject.project.length; i++) {
-        let label = document.createElement("label")
+        let label = document.createElement("div")
         let text = document.createTextNode(`${currentProject.project[i].title} due date:${currentProject.project[i].dueDate}`)
         let input = document.createElement("input")
         input.type="checkbox"
@@ -53,7 +53,7 @@ function createTasks(currentProject){
 //set event listener for a task to check if its been marked as done, and if so it changes the task to be linethrough 
 function listenForDone(currentTaskList){
     const tasks = document.querySelectorAll("input[type='checkbox']");
-    const labels = document.querySelectorAll("label")
+    const labels = document.getElementsByClassName("task")
     for (let i = 0; i < tasks.length; i++) {
         tasks[i].addEventListener("change",function(e){
             let index = tasks[i].getAttribute("data")
@@ -138,8 +138,8 @@ function toogleOld(){
     }
     if(addProjectDiv.classList.contains("selected")){
         addProjectDiv.classList.toggle("selected")
-        const element = document.getElementById("expand")
-        element.classList.toggle("hidden")
+        // const element = document.getElementById("expand")  comentado pra tentar tirar a funcao expand
+        // element.classList.toggle("hidden")
         addProjectDiv.style.background = "#FFFFFF"
     }
 }
@@ -233,7 +233,9 @@ function createAddProject(){
     let div = document.createElement("div")
     div.innerText= "add project +"
     div.id = "add-project"
-    div.appendChild(expandAdd())
+    div.setAttribute("data-bs-toggle","modal")
+    div.setAttribute("data-bs-target","#myModal")
+    // div.appendChild(expandAdd())
     return div
 }
 
@@ -279,9 +281,10 @@ function newProjectListener(){
         clear("display")
         btn.classList.toggle("selected")
         btn.style.background = "#757575"
-        const aux = document.getElementById("expand")
-        aux.classList.toggle("hidden")
-        addProject()  
+        // const aux = document.getElementById("expand")
+        // aux.classList.toggle("hidden")
+        // addProject()
+        newForm()
         
     })
     
@@ -307,11 +310,13 @@ function createIcons(number){
     editImg.setAttribute("data",number)
     deletImg.setAttribute("data",number)
     detailsImg.setAttribute("data",number)
+    detailsImg.setAttribute("data-bs-toggle","modal")
+    detailsImg.setAttribute("data-bs-target","#myModal")
     buttons.append(detailsImg,editImg,deletImg)
     buttons.style.display="inline"
     return buttons
 }
-
+//set event listeners for delete,edit,info
 function iconsListener(currentProject){
 
     function search(todo,projects){
@@ -331,8 +336,9 @@ function iconsListener(currentProject){
             e.stopPropagation()
             switch (icons[i].id) {
                 case "details":
-                    console.log("details")
-                    //todo
+                    let aux = icons[i].getAttribute("data")
+                    let todo = currentProject.project[aux]
+                    getDetails(todo)
                     break;
                 case "edit":
                     console.log("edit")
@@ -365,3 +371,45 @@ function iconsListener(currentProject){
     }
 }
 
+// put details of the todo into the modal
+function getDetails(todo){
+    const modal = document.getElementsByClassName("modal-body")
+    const form = document.getElementById("modalform")
+    const body = document.querySelector("body")
+    if(!form.classList.contains("hidden")){
+        form.classList.toggle("hidden")
+    }
+    body.appendChild(form)
+    modal[0].innerHTML = ""
+    let div = document.createElement("div")
+    div.append(document.createTextNode(`Title:${todo.title}\n`),document.createElement("br"))
+    div.append(document.createTextNode(`Due date:${todo.dueDate}`),document.createElement("br"))
+    div.append(document.createTextNode(`Description:${todo.description !== "" ? todo.description :"None"}`),document.createElement("br")) 
+    switch (todo.priority) {
+        case "0":
+            div.append(document.createTextNode(`Priority: low`),document.createElement("br")) 
+            break;
+        case "1":
+            div.append(document.createTextNode(`Priority: medium`),document.createElement("br")) 
+            break;
+        case "2":
+            div.append(document.createTextNode(`Priority: high`),document.createElement("br")) 
+            break;
+        default:
+            priority.innerText = `Priority: not defined`
+            break;
+    }
+    modal[0].appendChild(div)
+}
+
+export function newForm(){
+    const add = document.getElementById("add-project")
+    const form  = document.getElementById("modalform")
+    form.classList.toggle("hidden")
+    document.getElementsByClassName("modal-body")[0].innerHTML=""
+    document.getElementsByClassName("modal-body")[0].appendChild(form)
+    document.getElementsByClassName("modal-title")[0].innerText = "New Task"
+   
+    
+}
+// clear modal body document.getElementsByClassName("modal-body")[0].innerHTML=""
