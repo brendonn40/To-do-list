@@ -8,7 +8,6 @@ import { projects as arrayOfProjects } from "./index.js"
 import { createProject } from "./projectHandler.js"
 //populates the #display 
 function createDisplay(currentProject){
-    currentProject.order()
     const display = document.getElementById("display")
     display.appendChild(createTitle(currentProject))
     display.appendChild(createAddTask())
@@ -113,6 +112,7 @@ export function CreateEventListeners(projects){
     for (let i = 0; i < projectItems.length; i++) {
         projectItems[i].addEventListener("click",function(e){
             e.stopPropagation()
+            // e.stopImmediatePropagation()
             let index = projectItems[i].getAttribute("data")
             toogleOld()
             projectItems[i].classList.toggle("selected")
@@ -137,8 +137,6 @@ function toogleOld(){
     }
     if(addProjectDiv.classList.contains("selected")){
         addProjectDiv.classList.toggle("selected")
-        // const element = document.getElementById("expand")  comentado pra tentar tirar a funcao expand
-        // element.classList.toggle("hidden")
         addProjectDiv.style.background = "#FFFFFF"
     }
 }
@@ -147,8 +145,7 @@ function taskListener(project){
     const button = document.getElementById("add-button")
     button.addEventListener("click",function(e){
         e.stopPropagation()
-        newForm()
-        // len = project.project.length
+        createForm()
         createNewTask(project)
     })
 }
@@ -162,8 +159,9 @@ function createNewTask(project){
         e.preventDefault()
         
         const formData = new FormData(form)
-        let newToDo = createToDo(formData.get("title"),formData.get("description"),formData.get("dueDate"),formData.get("priority")) 
+        let newToDo = createToDo(formData.get("title"),formData.get("description"),formData.get("dueDate"),formData.get("priority"))  
         project.add(newToDo)
+        project.order()
         if(project.name !== "inbox"){
             arrayOfProjects[0].add(newToDo)
         }
@@ -176,7 +174,7 @@ function createNewTask(project){
 
 }
 
-//creates the div with add project function
+//returns the div with add project 
 function createAddProject(){
     
     let div = document.createElement("div")
@@ -235,6 +233,8 @@ function createIcons(number){
     deletImg.type= "image"
     detailsImg.type = "image"
     editImg.src = edit
+    editImg.setAttribute("data-bs-toggle","modal")
+    editImg.setAttribute("data-bs-target","#myModal")
     deletImg.src = delet
     detailsImg.src = details
     editImg.id = "edit"
@@ -277,7 +277,9 @@ function iconsListener(currentProject){
                     getDetails(todo)
                     break;
                 case "edit":
-                    console.log("edit")
+                    let aux2 = icons[i].getAttribute("data")
+                    let todo2 = currentProject.project[aux2]
+                    doEdit(todo2,currentProject)
                     //todo
                     break;
                 case "delete":
@@ -306,11 +308,41 @@ function iconsListener(currentProject){
 
     }
 }
+function doEdit(todo,project){
+    createForm()
+    const close = document.getElementsByClassName("btn-close")[0]
+    const form  =  document.getElementById("add-task-form")
+    const title = document.querySelector('[name="title"]')
+    const dueDate = document.querySelector('[name="dueDate"]')
+    const description = document.querySelector('[name="description"]')
+    const priority = document.querySelector('[name="priority"]')
+    const button = document.getElementById("add-new-task")
+    title.value = todo.title
+    dueDate.value = todo.dueDate
+    description.value = todo.description
+    priority.value = todo.priority
+    button.addEventListener("click",(e)=>{
+        e.stopPropagation()
+        e.preventDefault()
+        project.remove(todo)
+        const formData = new FormData(form)
+        let newToDo = createToDo(formData.get("title"),formData.get("description"),formData.get("dueDate"),formData.get("priority"))  
+        project.add(newToDo)
+        project.order()
+        if(project.name !== "inbox"){
+            arrayOfProjects[0].add(newToDo)
+        }
+        form.reset()
+        close.click()
+        clear("display")
+        createDisplay(project)
+    })
+}
 
 // put details of the todo into the modal
 function getDetails(todo){
     const modal = document.getElementsByClassName("modal-body")
-    movesForm()
+    document.getElementsByClassName("modal-title")[0].innerText = "Task info"
     modal[0].innerHTML = ""
     let div = document.createElement("div")
     div.append(document.createTextNode(`Title:${todo.title}\n`),document.createElement("br"))
@@ -332,57 +364,79 @@ function getDetails(todo){
     }
     modal[0].appendChild(div)
 }
-function newForm(){
-    const form  = document.getElementById("modalform")
-    const pform = document.getElementById("new-project-form")
-    const body = document.querySelector("body")
-    if(!pform.classList.contains("hidden"))
-    {
-        pform.classList.toggle("hidden")
-    }
-    body.appendChild(pform)
-    if(form.classList.contains("hidden")){
-        form.classList.toggle("hidden")
-    }
-    document.getElementsByClassName("modal-body")[0].innerHTML=""
+
+function createForm(){
+    document.getElementsByClassName("modal-body")[0].innerHTML = ""
+    const form = document.createElement("form")
+    form.setAttribute("id","add-task-form")
+    let title = document.createElement("input")
+    title.setAttribute("type", "text")
+    title.setAttribute("name", "title")
+    title.required= true
+    form.appendChild(createLabel("Title:",title))
+    form.appendChild(document.createElement("br"))
+
+    //create and add description input
+    let description = document.createElement("TEXTAREA")
+    description.setAttribute("type", "text")
+    description.setAttribute("name", "description")
+    form.appendChild(createLabel("Description:",description,true))
+    form.appendChild(document.createElement("br"))
+    //create and add due date input
+    let dueDate = document.createElement("input")
+    dueDate.setAttribute("type", "date")
+    dueDate.setAttribute("name", "dueDate")
+    dueDate.required = true
+    form.appendChild(createLabel("Due date:",dueDate))
+    form.appendChild(document.createElement("br"))
+    //creates select element for priority
+    let priority = document.createElement("select")
+    priority.setAttribute("id","priority")
+    priority.setAttribute("name", "priority")
+    let low = new Option('low','0')
+    let medium = new Option('medium','1')
+    let high = new Option("high","2")
+    priority.add(low,undefined)
+    priority.add(medium)
+    priority.add(high)
+    form.appendChild(createLabel("Priority:",priority))
+    let button = document.createElement("button")
+    button.type = "submit"
+    button.id = "add-new-task"
+    button.innerText= "submit"
+    form.appendChild(document.createElement("br"))
+    form.appendChild(button)
     document.getElementsByClassName("modal-body")[0].appendChild(form)
     document.getElementsByClassName("modal-title")[0].innerText = "New Task"
-   
-    
-}
 
+}
 
 function projectForm(){
     const modal = document.getElementsByClassName("modal-body")[0]
-    const taskform = document.getElementById("modalform")
-    const form = document.getElementById("new-project-form")
-    const body = document.querySelector("body")
-    if(!taskform.classList.contains("hidden")){
-        taskform.classList.toggle("hidden")
-    }
-    body.appendChild(taskform)
-    modal.innerHTML = ""
-    document.getElementsByClassName("modal-title")[0].innerText = "New Project"
+    document.getElementsByClassName("modal-body")[0].innerHTML = ""
+    const form = document.createElement("form")
+    form.setAttribute("id","new-project-form")
+    let name = document.createElement("input")
+    name.setAttribute("id","projectname")
+    name.setAttribute("type", "text")
+    name.setAttribute("name", "projectname")
+    name.required= true
+    form.appendChild(createLabel("Name of new project:",name))
+    let button = document.createElement("button")
+    button.type = "submit"
+    button.id = "add-new-project"
+    button.innerText= "submit"
+    form.appendChild(button)
     modal.appendChild(form)
-    if(form.classList.contains("hidden")){
-        form.classList.toggle("hidden")
-    }
-   
-    
+    document.getElementsByClassName("modal-title")[0].innerText = "New Project"
 }
-
-function movesForm(){
-    const form = document.getElementById("modalform")
-    const body = document.querySelector("body")
-    const pform = document.getElementById("new-project-form")
-    if(!pform.classList.contains("hidden"))
-    {
-        pform.classList.toggle("hidden")
+function createLabel(text,input,lineBreak = false){
+    let label = document.createElement("label")
+    let labelText = document.createTextNode(text)
+    label.appendChild(labelText)
+    if(lineBreak){
+        label.appendChild(document.createElement("br"))
     }
-    body.appendChild(pform)
-    document.getElementsByClassName("modal-title")[0].innerText = "Task info"
-    if(!form.classList.contains("hidden")){
-        form.classList.toggle("hidden")
-    }
-    body.appendChild(form)
+    label.appendChild(input)
+    return label
 }

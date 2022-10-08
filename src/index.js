@@ -6,9 +6,9 @@ let inbox = createProject("inbox")
 let week = createProject("week")
 let code = createProject("code")
 export let projects = [inbox,week,code]
-let novaTarefa = createToDo("programar","resolver os exercicios do odin project","25/09/2022","2")
-let novaTarefa2 = createToDo("cortar cabelo","ir ate o batata e cortar o cabelo","25/10/2022","0")
-let novaTarefa3 = createToDo("lavar louca","lavar as loucas depois da janta ","29/10/2022","1")
+let novaTarefa = createToDo("programar","resolver os exercicios do odin project","2022-09-19","2")
+let novaTarefa2 = createToDo("cortar cabelo","ir ate o batata e cortar o cabelo","2022-09-19","0")
+let novaTarefa3 = createToDo("lavar louca","lavar as loucas depois da janta ","2022-10-10","1")
 
 
 

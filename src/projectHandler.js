@@ -13,7 +13,8 @@ export function createProject(name){
             }
         },
         order(){
-            project.sort((a, b) => (a.priority > b.priority) ? 1 : -1)
+            project.sort((a, b) => (a.priority < b.priority) ? 1 : -1)
+            // project.sort(a => a.priority)
         }
 
     }
