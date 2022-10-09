@@ -2,6 +2,7 @@ import "./style.css"
 import {createToDo} from"./toDo.js"
 import {loadProjects, CreateEventListeners} from "./domHandler.js"
 import {createProject, grabInbox} from "./projectHandler.js"
+import {populateStorage,checkForStorage} from "./storage.js" 
 let inbox = createProject("inbox")
 let week = createProject("week")
 let code = createProject("code")
@@ -17,7 +18,13 @@ week.add(novaTarefa2)
 code.add(novaTarefa)
 projects[1].add(novaTarefa3)
 
+// checkForStorage()
 
 grabInbox(projects)
 loadProjects(projects)
-CreateEventListeners(projects)
+CreateEventListeners(projects) 
+export function main(projects){ 
+       
+}
+
+ 

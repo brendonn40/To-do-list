@@ -325,12 +325,19 @@ function doEdit(todo,project){
         e.stopPropagation()
         e.preventDefault()
         project.remove(todo)
+        if(project.name !== "inbox"){
+            arrayOfProjects[0].remove(todo)
+            arrayOfProjects[0].order()
+            
+        }
         const formData = new FormData(form)
         let newToDo = createToDo(formData.get("title"),formData.get("description"),formData.get("dueDate"),formData.get("priority"))  
         project.add(newToDo)
         project.order()
         if(project.name !== "inbox"){
             arrayOfProjects[0].add(newToDo)
+            arrayOfProjects[0].order()
+    
         }
         form.reset()
         close.click()
