@@ -1,51 +1,61 @@
-import { projects as arrayOfProjects } from "./index.js"
+// import { projects as arrayOfProjects } from "./index.js"
 import { createProject } from "./projectHandler.js"
 import { createToDo } from "./toDo.js"
-import { main } from "./index.js"
 
-export function populateStorage() {
-    for (let i = 0; i < arrayOfProjects.length; i++) {
-        let serialized = JSON.stringify(arrayOfProjects[i])
-        let name = arrayOfProjects[i].name
+// put all the projects into localstorage
+export function populateStorage(projects) {
+    for (let i = 0; i < projects.length; i++) {
+        let serialized = JSON.stringify(projects[i])
+        let name = projects[i].name
         localStorage.setItem(name,serialized) 
         
     }
-   
-    callMain();
   } 
-
-function callMain() {
+//gets whats saved from localstorage and return a array of objects
+function grabFromLocal() {
     let projects = []
-    for (let i = 0; i < arrayOfProjects.length; i++) {
-        let deserialized = JSON.parse(localStorage.getItem(arrayOfProjects[i].name))
-        projects.push(deserialized)
+    for (let i = 0; i < localStorage.length; i++) {
+        let name = localStorage.key(i)
+        projects.push(JSON.parse(localStorage.getItem(name)))
         
-    }   
-    
-    let newArray = convertToObj(projects)
-    arrayOfProjects = newArray
-    main(arrayOfProjects)
-    arrayOfProjects.onchange = populateStorage;
+    }
+    let objects = convertToObj(projects)
+    return objects
   }
-
-export function checkForStorage(){
+//check if there is local, if so grab those values, if not save the default values there
+export function checkForStorage(projects){
     if (localStorage.length > 0){
-        callMain();
+        projects = grabFromLocal()
+        return projects
         //Items are stored in local storage
     }else{
-        populateStorage();
+         populateStorage(projects);
+         return projects
         //Local storage is empty
     }
     
  } 
+
+
+//requires a array of parsed objects and returns a array of respective objects 
 function convertToObj(array){
     let projects = []
     for (let i = 0; i < array.length; i++) {
         projects.push(createProject(array[i].name))
         for (let j = 0; j < array[i].project.length; j++) {
-            projects[i].add(createToDo(array[i].project[j].title,array[i].project[j].description,array[i].project[j].dueDate,array[i].project[j].priority))
+            let newToDo = createToDo(array[i].project[j].title,array[i].project[j].description,array[i].project[j].dueDate,array[i].project[j].priority)
+            projects[i].add(newToDo)
+        
             
         }
+        
+    }
+    //makes sure inbox is always first element in the array
+    for (let i = 0; i < projects.length; i++) {
+        if(projects[i].name === "inbox"){
+            let inbox = projects.splice(i,1)
+            projects.unshift(inbox[0])
+        }        
         
     }
     return projects

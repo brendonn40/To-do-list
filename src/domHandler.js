@@ -6,6 +6,7 @@ import edit from "./edit.svg"
 import { createToDo } from "./toDo"
 import { projects as arrayOfProjects } from "./index.js"
 import { createProject } from "./projectHandler.js"
+import {populateStorage} from "./storage.js"
 //populates the #display 
 function createDisplay(currentProject){
     const display = document.getElementById("display")
@@ -67,7 +68,7 @@ function listenForDone(currentTaskList){
         })
         
     }
-
+    populateStorage(arrayOfProjects)
 }
 //creates the div with add new task button
 function createAddTask(){
@@ -169,6 +170,7 @@ function createNewTask(project){
         close.click()
         clear("display")
         createDisplay(project)
+        populateStorage(arrayOfProjects)
         
     })
 
@@ -196,6 +198,7 @@ function addProject(){
         if(name !== ""){
             close.click()
             arrayOfProjects.push(createProject(name))  
+            populateStorage(arrayOfProjects)
             clear("projects")
             loadProjects(arrayOfProjects)
             CreateEventListeners(arrayOfProjects)
@@ -218,7 +221,7 @@ function newProjectListener(){
         btn.style.background = "#757575"
         projectForm()
         addProject()
-
+        
         
     })
     
@@ -343,6 +346,8 @@ function doEdit(todo,project){
         close.click()
         clear("display")
         createDisplay(project)
+        populateStorage(arrayOfProjects)
+        
     })
 }
 
